@@ -11,4 +11,6 @@ public interface InqueryFormService {
 	Optional<InqueryForm> findById(Long id);
 //	Optional<InqueryForm> findByuserId(Long userId);
 	void deleteById(Long id);
+	
+	InqueryForm updateInqueryForm(InqueryForm inqueryForm) ;
 }

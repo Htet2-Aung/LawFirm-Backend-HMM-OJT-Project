@@ -7,7 +7,7 @@ import com.hostmdy.lawfirm.domain.Appointment;
 
 public interface AppointmentService {
 		
-	Appointment saveOrUpdate(Appointment appointment); 
+	Appointment saveOrUpdate(Appointment appointment, Long inqueryId); 
 	
 	List<Appointment> findAll();
 	
@@ -16,4 +16,6 @@ public interface AppointmentService {
 	Optional<Appointment> findByName(String name);
 	
 	void deleteById(Long id);
+	
+	
 }

@@ -6,15 +6,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hostmdy.lawfirm.domain.Appointment;
 import com.hostmdy.lawfirm.domain.InqueryForm;
 import com.hostmdy.lawfirm.repository.InqueryFormRepository;
 import com.hostmdy.lawfirm.service.InqueryFormService;
+
 @Service
-public class InqueryFormServiceImpl implements InqueryFormService{
+public class InqueryFormServiceImpl implements InqueryFormService {
 
 	private final InqueryFormRepository inqueryFormRepository;
-	
-	
+
 	@Autowired
 	public InqueryFormServiceImpl(InqueryFormRepository inqueryFormRepository) {
 		super();
@@ -23,7 +24,7 @@ public class InqueryFormServiceImpl implements InqueryFormService{
 
 	@Override
 	public InqueryForm saveOrupdate(InqueryForm inqueryForm) {
-		
+
 		return inqueryFormRepository.save(inqueryForm);
 	}
 
@@ -41,6 +42,25 @@ public class InqueryFormServiceImpl implements InqueryFormService{
 //	public Optional<InqueryForm> findByuserId(Long userId) {
 //		return inqueryFormRepository.findByUserId(userId);
 //	}
+
+	@Override
+	public InqueryForm updateInqueryForm(InqueryForm inqueryForm) {
+		// TODO Auto-generated method stub
+		
+				Long inqueryId = inqueryForm.getId();
+				Appointment appointment = inqueryFormRepository.findById(inqueryId).get().getAppointment();
+				
+				if(appointment !=null) {
+					
+					inqueryForm.setAppointment(appointment);
+					appointment.setInqueryForm(inqueryForm);
+					
+				}				
+				
+				return inqueryFormRepository.save(inqueryForm);
+		
+
+	}
 
 	@Override
 	public void deleteById(Long id) {

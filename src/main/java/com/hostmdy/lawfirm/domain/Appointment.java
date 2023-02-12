@@ -4,13 +4,18 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.NotBlank;
@@ -32,20 +37,31 @@ public class Appointment {
 	
 	private Double consultantFees;
 
-	
+	@Enumerated(EnumType.STRING)
 	private Status clientStatus;
 
-
+	@Enumerated(EnumType.STRING)
 	private Status lawyerStatus;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private LocalTime time;
 	
-//	@OneToOne(fetch = FetchType.EAGER)
-//	@JsonIgnore
-////	@JoinColumn(name="inqueryform_id",nullable = false)
-//	private InqueryForm inqueryForm;
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="inqueryform_id",nullable = false)
+	@JsonIgnore
+	private InqueryForm inqueryForm;
+	
+	public Appointment(@NotBlank(message = "Name is not blank") String name, Double consultantFees, Status clientStatus,
+			Status lawyerStatus, LocalDate date, LocalTime time) {
+		super();
+		this.name = name;
+		this.consultantFees = consultantFees;
+		this.clientStatus = clientStatus;
+		this.lawyerStatus = lawyerStatus;
+		this.date = date;
+		this.time = time;
+	}
 	
 	@PrePersist
 	void onCreate() {
@@ -58,6 +74,10 @@ public class Appointment {
 		this.date = LocalDate.now();
 		this.time = LocalTime.now();
 	}
+
+
+	
+	
 	
 	
 }

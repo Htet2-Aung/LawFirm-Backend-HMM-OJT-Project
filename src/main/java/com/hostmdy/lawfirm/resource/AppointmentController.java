@@ -1,7 +1,5 @@
 package com.hostmdy.lawfirm.resource;
 
-
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +22,6 @@ import com.hostmdy.lawfirm.service.MapValidationErrorService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/api/appointment")
 @CrossOrigin(origins = "http://localhost:3000/")
@@ -39,53 +36,52 @@ public class AppointmentController {
 		this.appointmentService = appointmentService;
 		this.mapErrorService = mapErrorService;
 	}
-	
-	@PostMapping("/create")
-	public ResponseEntity<?> createAppointment(@Valid @RequestBody Appointment appointment,BindingResult result){
-		
+
+	@PostMapping("/create/{inqueryId}")
+	public ResponseEntity<?> createAppointment(@Valid @RequestBody Appointment appointment, BindingResult result,
+			@PathVariable Long inqueryId) {
+
 		ResponseEntity<?> responseErrorObj = mapErrorService.validate(result);
-		
-		if(responseErrorObj != null)
+
+		if (responseErrorObj != null)
 			return responseErrorObj;
-		
-		Appointment createAppointment = appointmentService.saveOrUpdate(appointment);
-		return new ResponseEntity<Appointment>(createAppointment,HttpStatus.CREATED);
-		
+
+		Appointment createAppointment = appointmentService.saveOrUpdate(appointment, inqueryId);
+		return new ResponseEntity<Appointment>(createAppointment, HttpStatus.CREATED);
+
 	}
-	
+
 	@GetMapping("/all")
 	public List<Appointment> findAll() {
 		return appointmentService.findAll();
 	}
-	
+
 	@GetMapping("/id/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id) {
 		Optional<Appointment> appOptional = appointmentService.findById(id);
-		
-		if(appOptional.isEmpty())
-			return new ResponseEntity<String>("Project with id: "+id+"is not found",HttpStatus.NOT_FOUND);
-		
-		return new ResponseEntity<Appointment>(appOptional.get(),HttpStatus.OK);
+
+		if (appOptional.isEmpty())
+			return new ResponseEntity<String>("Project with id: " + id + "is not found", HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<Appointment>(appOptional.get(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/name/{name}")
 	public ResponseEntity<?> findByName(@PathVariable String name) {
 		Optional<Appointment> appOptional = appointmentService.findByName(name);
-		
-		if(appOptional.isEmpty()) 
-			return new ResponseEntity<String>("Appointment Name: "+name+" is not found.", HttpStatus.NOT_FOUND);
-		
+
+		if (appOptional.isEmpty())
+			return new ResponseEntity<String>("Appointment Name: " + name + " is not found.", HttpStatus.NOT_FOUND);
+
 		return new ResponseEntity<Appointment>(appOptional.get(), HttpStatus.OK);
-		
-		
+
 	}
-	
+
 	@DeleteMapping("/id/{id}")
-	public ResponseEntity<String> deleteById(@PathVariable Long id){
-		
+	public ResponseEntity<String> deleteById(@PathVariable Long id) {
+
 		appointmentService.deleteById(id);
-		return new ResponseEntity<String>("Delete id="+id, HttpStatus.OK);
+		return new ResponseEntity<String>("Delete id=" + id, HttpStatus.OK);
 	}
-	
-	
+
 }

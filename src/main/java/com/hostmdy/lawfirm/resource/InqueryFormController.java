@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,37 +29,49 @@ public class InqueryFormController {
 
 	private final InqueryFormService inqueryFormService;
 	private final MapValidationErrorService mapErrorService;
-	
+
 	public InqueryFormController(InqueryFormService inqueryFormService, MapValidationErrorService mapErrorService) {
 		super();
 		this.inqueryFormService = inqueryFormService;
 		this.mapErrorService = mapErrorService;
 	}
-	
+
 	@PostMapping("/create")
 	public ResponseEntity<?> createInqueryForm(@Valid @RequestBody InqueryForm inqueryForm, BindingResult result) {
 		ResponseEntity<?> responseErrorObj = mapErrorService.validate(result);
-		
-		if(responseErrorObj != null) 
+
+		if (responseErrorObj != null)
 			return responseErrorObj;
-		
+
 		InqueryForm createInquery = inqueryFormService.saveOrupdate(inqueryForm);
 		return new ResponseEntity<InqueryForm>(createInquery, HttpStatus.CREATED);
 	}
-	
+
+	@PatchMapping("/update")
+	public ResponseEntity<?> updateInqueryForm(@Valid @RequestBody InqueryForm inqueryForm, BindingResult result) {
+		ResponseEntity<?> responseErrorObject = mapErrorService.validate(result);
+
+		if (responseErrorObject != null)
+			return responseErrorObject;
+
+		InqueryForm updateInqueryForm = inqueryFormService.updateInqueryForm(inqueryForm);
+
+		return new ResponseEntity<InqueryForm>(updateInqueryForm, HttpStatus.OK);
+	}
+
 	@GetMapping("/all")
-	public List<InqueryForm> findAll(){
+	public List<InqueryForm> findAll() {
 		return inqueryFormService.findAll();
 	}
-	
+
 	@GetMapping("/id/{id}")
-	public ResponseEntity<?> findById(@PathVariable Long id){
+	public ResponseEntity<?> findById(@PathVariable Long id) {
 		Optional<InqueryForm> inqueryOptional = inqueryFormService.findById(id);
-		if(inqueryOptional.isEmpty())
-			return new ResponseEntity<String>("InqueryForm id:"+id+"is not found", HttpStatus.NOT_FOUND);
+		if (inqueryOptional.isEmpty())
+			return new ResponseEntity<String>("InqueryForm id:" + id + "is not found", HttpStatus.NOT_FOUND);
 		return new ResponseEntity<InqueryForm>(inqueryOptional.get(), HttpStatus.OK);
 	}
-	
+
 //	@GetMapping("/userid/{userid}")
 //	public ResponseEntity<?> findByUserId(@PathVariable Long userid){
 //		Optional<InqueryForm> inOptional = inqueryFormService.findByuserId(userid);
@@ -66,10 +79,10 @@ public class InqueryFormController {
 //			return new ResponseEntity<String>("User Id:"+userid+" is not found",HttpStatus.NOT_FOUND);
 //		return new ResponseEntity<InqueryForm>(inOptional.get(),HttpStatus.OK);
 //	}
-	
+
 	@DeleteMapping("/id/{id}")
-	public ResponseEntity<String> deleById(@PathVariable Long id){
+	public ResponseEntity<String> deleById(@PathVariable Long id) {
 		inqueryFormService.deleteById(id);
-		return new ResponseEntity<String>("Deleted id= "+id, HttpStatus.OK);
+		return new ResponseEntity<String>("Deleted id= " + id, HttpStatus.OK);
 	}
 }
