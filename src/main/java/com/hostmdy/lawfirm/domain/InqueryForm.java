@@ -11,12 +11,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class InqueryForm {
 
 	@Id
@@ -34,7 +36,7 @@ public class InqueryForm {
 
 //	private Long userId;
 
-	@OneToOne(mappedBy = "inqueryForm", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, orphanRemoval = true)
+	@OneToOne(mappedBy = "inqueryForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Appointment appointment;
 

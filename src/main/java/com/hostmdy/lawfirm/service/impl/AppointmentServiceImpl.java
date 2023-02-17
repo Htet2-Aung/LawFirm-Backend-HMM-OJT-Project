@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hostmdy.lawfirm.domain.Appointment;
+import com.hostmdy.lawfirm.domain.Contract;
 import com.hostmdy.lawfirm.domain.InqueryForm;
 import com.hostmdy.lawfirm.repository.AppointmentRepository;
 import com.hostmdy.lawfirm.repository.InqueryFormRepository;
@@ -57,6 +58,20 @@ public class AppointmentServiceImpl implements AppointmentService{
 	public void deleteById(Long id) {
 		// TODO Auto-generated method stub
 		appointmentRepository.deleteById(id);
+	}
+
+	@Override
+	public Appointment updateAppointment(Appointment appointment) {
+		// TODO Auto-generated method stub
+		Long appointmentId = appointment.getId();
+		
+		Contract contract = appointmentRepository.findById(appointmentId).get().getContract();
+		
+		if(contract != null) {
+			appointment.setContract(contract);
+			contract.setAppointment(appointment);
+		}
+		return appointmentRepository.save(appointment);
 	}
 
 

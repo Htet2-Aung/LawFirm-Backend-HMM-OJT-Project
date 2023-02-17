@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,6 +52,10 @@ public class Appointment {
 	@JoinColumn(name="inqueryform_id",nullable = false)
 	@JsonIgnore
 	private InqueryForm inqueryForm;
+	
+	@OneToOne(mappedBy = "appointment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	private Contract contract;
 	
 	public Appointment(@NotBlank(message = "Name is not blank") String name, Double consultantFees, Status clientStatus,
 			Status lawyerStatus, LocalDate date, LocalTime time) {

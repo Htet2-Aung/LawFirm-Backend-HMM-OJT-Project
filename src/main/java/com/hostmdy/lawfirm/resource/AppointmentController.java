@@ -48,9 +48,22 @@ public class AppointmentController {
 
 		Appointment createAppointment = appointmentService.saveOrUpdate(appointment, inqueryId);
 		return new ResponseEntity<Appointment>(createAppointment, HttpStatus.CREATED);
-
+		
 	}
 
+//	@PostMapping("/update")
+//	public ResponseEntity<?> updateAppointment(@Valid @RequestBody  Appointment appointment,
+//			BindingResult result){
+//		ResponseEntity<?> responseErrorObject = mapErrorService.validate(result);
+//		
+//		if(responseErrorObject!= null)
+//			return responseErrorObject;
+//		
+//		Appointment updateAppointment = appointmentService.updateAppointment(appointment);
+//		
+//		 return new ResponseEntity<Appointment>(updateAppointment,HttpStatus.OK);
+//		}
+	
 	@GetMapping("/all")
 	public List<Appointment> findAll() {
 		return appointmentService.findAll();
