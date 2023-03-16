@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.hostmdy.lawfirm.domain.Appointment;
 import com.hostmdy.lawfirm.domain.Contract;
+import com.hostmdy.lawfirm.domain.CreateStatus;
 import com.hostmdy.lawfirm.domain.InqueryForm;
+import com.hostmdy.lawfirm.domain.Status;
 import com.hostmdy.lawfirm.repository.AppointmentRepository;
 import com.hostmdy.lawfirm.repository.InqueryFormRepository;
 import com.hostmdy.lawfirm.service.AppointmentService;
@@ -30,8 +32,14 @@ public class AppointmentServiceImpl implements AppointmentService{
 	public Appointment saveOrUpdate(Appointment appointment, Long inqueryId) {
 		// TODO Auto-generated method stub
 		InqueryForm inqueryForm = inqueryFormRepository.findById(inqueryId).get();
-		
+		inqueryForm.setAppointmentStatus(CreateStatus.CREATED);
 		inqueryForm.setAppointment(appointment);
+		
+		
+		appointment.setLawyerName(inqueryForm.getLawyerName());
+		appointment.setUsername(inqueryForm.getUsername());
+		appointment.setClientStatus(Status.Disagree);
+		appointment.setLawyerStatus(Status.Disagree);
 		appointment.setInqueryForm(inqueryForm);
 		return appointmentRepository.save(appointment);
 	}
@@ -57,22 +65,25 @@ public class AppointmentServiceImpl implements AppointmentService{
 	@Override
 	public void deleteById(Long id) {
 		// TODO Auto-generated method stub
+		
 		appointmentRepository.deleteById(id);
 	}
 
 	@Override
-	public Appointment updateAppointment(Appointment appointment) {
-		// TODO Auto-generated method stub
-		Long appointmentId = appointment.getId();
+	public Appointment updateAppointment(Appointment appointment,InqueryForm inqueryForm) {
 		
-		Contract contract = appointmentRepository.findById(appointmentId).get().getContract();
+		appointment.setUsername(inqueryForm.getUsername());
+		appointment.setLawyerName(inqueryForm.getLawyerName());		
 		
-		if(contract != null) {
-			appointment.setContract(contract);
-			contract.setAppointment(appointment);
-		}
+		inqueryForm.setAppointment(appointment);
+		appointment.setInqueryForm(inqueryForm);
+		inqueryFormRepository.save(inqueryForm);
+		
+		
 		return appointmentRepository.save(appointment);
 	}
+
+
 
 
 

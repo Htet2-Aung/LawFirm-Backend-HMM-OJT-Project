@@ -1,5 +1,6 @@
 package com.hostmdy.lawfirm.resource;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hostmdy.lawfirm.domain.Appointment;
+import com.hostmdy.lawfirm.domain.CreateStatus;
+import com.hostmdy.lawfirm.domain.InqueryForm;
+import com.hostmdy.lawfirm.domain.User;
+import com.hostmdy.lawfirm.repository.InqueryFormRepository;
 import com.hostmdy.lawfirm.service.AppointmentService;
+import com.hostmdy.lawfirm.service.InqueryFormService;
 import com.hostmdy.lawfirm.service.MapValidationErrorService;
 
 import jakarta.validation.Valid;
@@ -28,19 +34,32 @@ import jakarta.validation.Valid;
 public class AppointmentController {
 
 	private final AppointmentService appointmentService;
+	private final InqueryFormRepository inqueryFormRepository;
 	private final MapValidationErrorService mapErrorService;
+	private final InqueryFormService inqueryFormService;
+	
 
 	@Autowired
-	public AppointmentController(AppointmentService appointmentService, MapValidationErrorService mapErrorService) {
+	public AppointmentController(AppointmentService appointmentService, MapValidationErrorService mapErrorService, InqueryFormRepository inqueryFormRepository, InqueryFormService inqueryFormService) {
 		super();
 		this.appointmentService = appointmentService;
+		this.inqueryFormRepository = inqueryFormRepository;
 		this.mapErrorService = mapErrorService;
+		this.inqueryFormService = inqueryFormService;
 	}
 
 	@PostMapping("/create/{inqueryId}")
 	public ResponseEntity<?> createAppointment(@Valid @RequestBody Appointment appointment, BindingResult result,
 			@PathVariable Long inqueryId) {
+		
+		//get user info
+		
 
+		//InqueryForm inquery= inqueryFormRepository.findById(inqueryId).get();
+		//inquery.setAppointmentStatus(true);
+		//inqueryFormRepository.save(inquery);
+		
+		
 		ResponseEntity<?> responseErrorObj = mapErrorService.validate(result);
 
 		if (responseErrorObj != null)
@@ -49,6 +68,38 @@ public class AppointmentController {
 		Appointment createAppointment = appointmentService.saveOrUpdate(appointment, inqueryId);
 		return new ResponseEntity<Appointment>(createAppointment, HttpStatus.CREATED);
 		
+	}
+
+
+	@PostMapping("/update/{inqueryId}")
+	public ResponseEntity<?> updateAppointment(@Valid @RequestBody Appointment appointment, BindingResult result, Principal principal,@PathVariable Long inqueryId) {
+		ResponseEntity<?> responseErrorObject = mapErrorService.validate(result);
+		System.out.println("In the appointment update, user name is ;;;;;;;;;;;;;;;;"+appointment.getUsername());
+		System.out.println("In the appointment update, inqueryid:"+inqueryId);
+		
+		System.out.println("In the appointment update,:"+appointment);
+		List<Appointment> applst = appointmentService.findAll();
+		InqueryForm inqueryForm = new InqueryForm();
+		
+		for(Appointment app: applst) {
+			if(app.getInqueryForm().getId() == inqueryId)
+			{
+				inqueryForm = app.getInqueryForm();
+			}
+		}
+		
+		
+//		InqueryForm inquery= inqueryFormService.findById(inqueryId).get();
+//		System.out.println("In the appointment update, inqueryid:"+inquery);
+		
+		if (responseErrorObject != null)
+			return responseErrorObject;
+
+		Appointment updateAppointment = appointmentService.updateAppointment(appointment,inqueryForm);
+
+		return new ResponseEntity<Appointment>(updateAppointment, HttpStatus.OK);
+		
+	
 	}
 
 //	@PostMapping("/update")
@@ -91,8 +142,11 @@ public class AppointmentController {
 	}
 
 	@DeleteMapping("/id/{id}")
-	public ResponseEntity<String> deleteById(@PathVariable Long id) {
-
+	public ResponseEntity<String> deleteById(@PathVariable Long id,Principal principal) {
+		
+		InqueryForm inqueryForm = appointmentService.findById(id).get().getInqueryForm();
+		inqueryForm.setAppointmentStatus(CreateStatus.NO_CREATE);
+//		inqueryForm.setAppointment(null);
 		appointmentService.deleteById(id);
 		return new ResponseEntity<String>("Delete id=" + id, HttpStatus.OK);
 	}

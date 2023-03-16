@@ -33,10 +33,13 @@ public class Appointment {
 	private Long id;
 
 	@NotBlank(message="Name is not blank")
-	@Column(updatable = false, unique = true)
 	private String name;
 	
 	private Double consultantFees;
+	
+	private String username;
+	
+	private String lawyerName;
 
 	@Enumerated(EnumType.STRING)
 	private Status clientStatus;
@@ -47,38 +50,52 @@ public class Appointment {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private LocalTime time;
+	@Enumerated(EnumType.STRING)
+	private CreateStatus contractStatus;
 	
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="inqueryform_id",nullable = false)
-	@JsonIgnore
+	@JoinColumn(name="inqueryform_id"/*,nullable = false*/)
+//	@JsonIgnore
 	private InqueryForm inqueryForm;
+	
 	
 	@OneToOne(mappedBy = "appointment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
 	@JsonIgnore
 	private Contract contract;
+		
+	@PrePersist
+	void onCreate() {
+		this.contractStatus=CreateStatus.NO_CREATE;
+		
+	}
 	
-	public Appointment(@NotBlank(message = "Name is not blank") String name, Double consultantFees, Status clientStatus,
-			Status lawyerStatus, LocalDate date, LocalTime time) {
+//	@PreUpdate
+//	void onUpdate() {
+//		this.date = LocalDate.now();
+//		this.time = LocalTime.now();
+//	}
+
+	public Appointment(@NotBlank(message = "Name is not blank") String name, Double consultantFees, String username,
+			String lawyerName, Status clientStatus, Status lawyerStatus, LocalDate date, LocalTime time,
+			InqueryForm inqueryForm, CreateStatus contractStatus, Contract contract) {
 		super();
 		this.name = name;
 		this.consultantFees = consultantFees;
+		this.username = username;
+		this.lawyerName = lawyerName;
 		this.clientStatus = clientStatus;
 		this.lawyerStatus = lawyerStatus;
 		this.date = date;
 		this.time = time;
+		this.inqueryForm = inqueryForm;
+		this.contractStatus = contractStatus;
+		this.contract = contract;
 	}
+
 	
-	@PrePersist
-	void onCreate() {
-		this.date = LocalDate.now();
-		this.time = LocalTime.now();
-	}
 	
-	@PreUpdate
-	void onUpdate() {
-		this.date = LocalDate.now();
-		this.time = LocalTime.now();
-	}
+	
+
 
 
 	

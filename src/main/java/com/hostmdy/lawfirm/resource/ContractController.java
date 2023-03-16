@@ -1,5 +1,6 @@
 package com.hostmdy.lawfirm.resource;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.hostmdy.lawfirm.domain.Appointment;
 import com.hostmdy.lawfirm.domain.Contract;
-
-
+import com.hostmdy.lawfirm.domain.CreateStatus;
+import com.hostmdy.lawfirm.repository.AppointmentRepository;
+import com.hostmdy.lawfirm.service.AppointmentService;
 import com.hostmdy.lawfirm.service.ContractServices;
 import com.hostmdy.lawfirm.service.MapValidationErrorService;
 
@@ -33,21 +35,30 @@ public class ContractController {
 	
 	private final ContractServices contractService;
 	private final MapValidationErrorService errorMapService;
+    private final AppointmentRepository appointmentRepository;
 	
 	@Autowired
-	public ContractController(ContractServices contractService, MapValidationErrorService errorMapService) {
+	public ContractController(ContractServices contractService, MapValidationErrorService errorMapService, AppointmentRepository appointmentRepository) {
 		super();
 		this.contractService = contractService;
 		this.errorMapService = errorMapService;
+		this.appointmentRepository = appointmentRepository;
+		
 	}
 
 	//@PostMapping("/user/{Id}/create")
 	@PostMapping("/create/{appointmentId}")
 	public ResponseEntity<?> createContract(@Valid @RequestBody  Contract contract,
-			BindingResult result, @PathVariable Long appointmentId) {
+			BindingResult result, @PathVariable Long appointmentId,Principal principal) {
+		
+		System.out.println("appointment id is ;;;;;;;;;;;;;;;;"+appointmentId);
 		
 		System.out.println("description is "+ contract.getConDescription());
-
+		
+			
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		appointment.setContractStatus(CreateStatus.CREATED);
+		
 		ResponseEntity<?> responseErrorObject = errorMapService.validate(result);
 
 		if (responseErrorObject != null)

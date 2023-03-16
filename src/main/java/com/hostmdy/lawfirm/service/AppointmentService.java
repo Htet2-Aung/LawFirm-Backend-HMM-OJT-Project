@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.hostmdy.lawfirm.domain.Appointment;
+import com.hostmdy.lawfirm.domain.InqueryForm;
+
+import jakarta.validation.Valid;
 
 public interface AppointmentService {
 		
@@ -17,7 +20,7 @@ public interface AppointmentService {
 	
 	void deleteById(Long id);
 	
-	Appointment updateAppointment(Appointment appointment);
+	Appointment updateAppointment(@Valid Appointment appointment, InqueryForm inquery);
 	
 	
 }
