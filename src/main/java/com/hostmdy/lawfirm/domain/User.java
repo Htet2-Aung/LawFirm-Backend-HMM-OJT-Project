@@ -44,7 +44,6 @@ public class User implements UserDetails{
 	private Long id;
 	
 	private String firstName;
-	private String middleName;
 	private String lastName;
 	private String address;
 	private Double cost;

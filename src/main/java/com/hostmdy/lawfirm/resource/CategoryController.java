@@ -64,7 +64,7 @@ public class CategoryController {
 		
 	}
 	
-	@PatchMapping("/update")
+	@PostMapping("/update")
 	public ResponseEntity<?> updateCategory(@Valid @RequestBody Category category, BindingResult result) {
 		ResponseEntity<?> responseErrorObject = mapErrorService.validate(result);
 

@@ -82,7 +82,8 @@ public class ContractServiceImpl implements ContractServices  {
 		//get original associated case object of contract
 		Long contractId=contract.getId();
 		Cases cases=contractRepository.findById(contractId).get().getCases();
-		
+		Appointment appointment = contractRepository.findById(contractId).get().getAppointment();
+		contract.setAppointment(appointment);
 		if(cases !=null) {
 			//contract-case
 			contract.setCases(cases);

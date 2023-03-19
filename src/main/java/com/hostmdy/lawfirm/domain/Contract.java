@@ -47,6 +47,7 @@ public class Contract {
 	private String lawyerName;
 	@Enumerated(EnumType.STRING)
 	private CreateStatus caseCreated;
+	private Double lawyerLandingFees;
 
 	
 	@OneToOne(fetch = FetchType.EAGER)
@@ -68,6 +69,7 @@ public class Contract {
 	@PrePersist
 	void OnCreate() {
 		this.caseCreated=CreateStatus.NO_CREATE;
+		this.paymentStatus = CreateStatus.NO_CREATE;
 }
 
 }
